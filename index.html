@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/style.css">
+  <title>Weather App</title>
+</head>
+<body>
+  <!-- <img src="image/sun.jpg" alt=""> --> 
+  <!-- <div class="background"> 
+    <img src="image/cloudbg.webp" alt="">
+  </div> -->
+  <div class="container">
+    <div class="search">
+      <input type="text" placeholder="Enter City Name">
+      <button><img src="image/search.png" alt=""></button>
+      <ul id="city-suggestions"></ul>
+  </div>
+  
+    <div class="weather">
+      <div class="photo">
+        <img src="image/sun.png" class="icon" alt="">
+      </div>
+      <h1 class="celcius"><b>22°C</b></h1>
+      <h2 class="city"><b>London</b></h2>
+
+      <div class="detail">
+        <div class="col">
+          <img src="image/humidity.png" alt="">
+            <div class="humidity">
+              <p class="humidityP">20%</p>
+              <p>Humidity</p>
+            </div>
+        </div>
+        <div class="col">
+            <img src="image/wind.png" alt="">
+            <div class="wind">
+              <p class="windS">20km/h</p>
+              <p>Wind</p>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <script>
+
+
+const searchInput = document.querySelector('.search input');
+    const searchBtn = document.querySelector('.search button');
+    const image = document.querySelector('.icon');
+
+
+
+    async function getWeather(city) {
+      var res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f36b896e2bdcf62ef1c1cb6994f61bde&units=metric`);
+      var data = await res.json();
+      console.log(data);
+      document.querySelector('.city').innerHTML = data.name;
+      document.querySelector('.celcius').innerHTML = Math.round(data.main.temp) +"°C";
+      document.querySelector('.humidityP').innerHTML = Math.round(data.main.humidity) +"%";
+      document.querySelector('.windS').innerHTML = Math.round(data.wind.speed) +"km/h";
+
+
+      if(data.weather[0].main == "Clouds"){
+        image.src="image/cloudy.png"
+      }
+      else if(ata.weather[0].main == "Clear"){
+        image.src = "image/sun.png"
+      }
+      else if(ata.weather[0].main == "Drizzle"){
+        image.src = "image/drizzle.png"
+      }
+      else if(ata.weather[0].main == "Mist"){
+        image.src = "image/mist.png"
+      }
+      else if(ata.weather[0].main == "Snow"){
+        image.src = "image/snow.png"
+      }
+      else if(ata.weather[0].main == "Rain"){
+        image.src = "image/rain.png"
+      }
+
+    }
+
+    searchBtn.addEventListener('click', () => {
+      getWeather(searchInput.value);
+    })
+
+
+
+
+
+
+
+
+    // Function to get the user's current location
+function getCurrentLocationWeather() {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Fetch weather data using the obtained coordinates
+        getWeatherByCoordinates(latitude, longitude);
+    }, (error) => {
+        console.error("Error fetching location: " + error.message);
+    });
+}
+
+// Function to fetch weather data using coordinates
+async function getWeatherByCoordinates(latitude, longitude) {
+    const apiKey = 'f36b896e2bdcf62ef1c1cb6994f61bde'; // Replace with your actual API key
+    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`);
+    const data = await res.json();
+
+    // Update weather information on the page
+    updateWeatherInfo(data);
+}
+
+// Function to update weather information on the page
+function updateWeatherInfo(data) {
+    document.querySelector('.city').innerHTML = data.name;
+    document.querySelector('.celcius').innerHTML = Math.round(data.main.temp) + "°C";
+    document.querySelector('.humidityP').innerHTML = Math.round(data.main.humidity) + "%";
+    document.querySelector('.windS').innerHTML = Math.round(data.wind.speed) + "km/h";
+
+    // Update the weather icon based on the weather condition
+    updateWeatherIcon(data.weather[0].main);
+}
+
+// Function to update the weather icon based on weather condition
+function updateWeatherIcon(condition) {
+    const image = document.querySelector('.icon');
+
+    if (condition === "Clouds") {
+        image.src = "image/cloudy.png";
+    } else if (condition === "Clear") {
+        image.src = "image/sun.png";
+    } else if (condition === "Drizzle") {
+        image.src = "image/drizzle.png";
+    } else if (condition === "Mist") {
+        image.src = "image/mist.png";
+    } else if (condition === "Snow") {
+        image.src = "image/snow.png";
+    } else if (condition === "Rain") {
+        image.src = "image/rain.png";
+    }
+}
+
+// Call the function to get the user's current location and weather data by default
+getCurrentLocationWeather();
+
+
+
+
+
+
+ 
+  </script>
+</body>
+</html>
